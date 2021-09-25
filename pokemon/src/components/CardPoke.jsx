@@ -1,27 +1,35 @@
 import { useEffect, useState } from "react";
-
+import { useHistory } from "react-router";
+import background from "../assets/logo.png";
 export default function CardPoke({ poke }) {
+  const router = useHistory();
   const [image, setImage] = useState("");
   const [types, setTypes] = useState([]);
   const [color, setColor] = useState("");
+  const [idPoke, setIdPoke] = useState("");
 
   useEffect(() => {
     fetchPoke();
   }, []);
 
   function detailPoke(pokemon) {
-    console.log(pokemon);
+    router.push({
+      pathname: `detail/${pokemon.name}`,
+      state: { url: pokemon.url },
+    });
   }
 
   async function fetchPoke() {
     try {
       const response = await fetch(`${poke.url}`);
       if (response.ok) {
-        const { sprites, species, types } = await response.json();
-        setImage(sprites.front_default);
-        setTypes(types);
+        const result = await response.json();
 
-        const responseColor = await fetch(`${species.url}`);
+        console.log(result, "ress");
+        setImage(result.sprites.front_default);
+        setTypes(result.types);
+        setIdPoke(result.id);
+        const responseColor = await fetch(`${result.species.url}`);
         if (responseColor.ok) {
           const { color } = await responseColor.json();
           setColor(color.name);
@@ -47,12 +55,11 @@ export default function CardPoke({ poke }) {
       }
     >
       <div className="flex flex-col justify-center my-10">
-        <button
-          onClick={() => detailPoke(poke.url)}
-          className="text-xl uppercase"
-        >
+        <h2 className="font-bold text-gray-500">#00{idPoke}</h2>
+        <button onClick={() => detailPoke(poke)} className="text-xl uppercase">
           {poke.name}
         </button>
+
         {types.map((type, i) => {
           return (
             <div className="flex" key={i}>
@@ -71,16 +78,21 @@ export default function CardPoke({ poke }) {
           );
         })}
       </div>
-      <div
-        style={{
-          backgroundImage: `url(https://cdn.pixabay.com/photo/2016/07/23/13/18/pokemon-1536847_960_720.png)`,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-        }}
-        className="flex mt-auto"
-      >
-        <img className="w-full h-full object-cover" src={image} alt="pokemon" />
+      <div className="w-full h-full items-end mt-auto">
+        <div className="absolute z-50">
+          <img
+            className="w-full h-full object-contain hover:scale-125 transition-all transform duration-500"
+            src={image}
+            alt="pokemon"
+          />
+        </div>
+        <div
+          style={{
+            opacity: 0.4,
+          }}
+        >
+          <img style={{ width: 100 }} src={background} alt="background" />
+        </div>
       </div>
     </div>
   );

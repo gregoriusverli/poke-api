@@ -22,8 +22,8 @@ export default function Home() {
   return (
     // <div className="flex flex-row flex-wrap justify-center">
     <div class="flex flex-row flex-wrap justify-center items-center w-full">
-      {listPoke.map((pokemon) => {
-        return <CardPoke key={pokemon.id} poke={pokemon} />;
+      {listPoke.map((pokemon, i) => {
+        return <CardPoke key={i} poke={pokemon} />;
       })}
     </div>
   );

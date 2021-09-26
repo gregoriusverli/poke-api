@@ -1,2 +1,3 @@
 export const LIST_POKEMON = "LIST/POKEMON";
 export const DETAIL_POKEMON = "DETAIL/POKEMON";
+export const SET_LOADING = "SET/LOADING";

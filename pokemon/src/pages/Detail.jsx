@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useParams } from "react-router";
+import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import About from "../components/About";
 import Evolution from "../components/Evolution";
+import { Loading } from "../components/Loading";
 import Moves from "../components/Moves";
 import Stats from "../components/Stats";
-import { fetchDetailPokemon } from "../store/action";
+import { fetchDetailPokemon, setLoading } from "../store/action";
 
 export default function PokemonDetail() {
   const router = useHistory();
@@ -25,13 +26,20 @@ export default function PokemonDetail() {
   }, [detailPokemon]);
 
   async function fetchColor() {
-    const responseColor = await fetch(`${detailPokemon?.species?.url}`);
-    if (responseColor.ok) {
-      const result = await responseColor.json();
-      setEvoUrl(result.evolution_chain.url);
-      setColor(result.color.name);
-    } else {
-      throw Error;
+    try {
+      dispatch(setLoading(true));
+      const responseColor = await fetch(`${detailPokemon?.species?.url}`);
+      if (responseColor.ok) {
+        const result = await responseColor.json();
+        setEvoUrl(result.evolution_chain.url);
+        setColor(result.color.name);
+      } else {
+        throw Error;
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      dispatch(setLoading(false));
     }
   }
 
@@ -39,24 +47,78 @@ export default function PokemonDetail() {
     setBarActive(bar);
   }
 
-  if (loading) {
-    return <h1>loading...</h1>;
-  } else {
+  if (color) {
     return (
-      <div class="h-1/2 w-screen bg-gray-50 flex justify-center items-center">
+      <div className="h-1/2 w-screen bg-gray-50 flex justify-center items-center">
         <div
-          class={`mx-auto
-          bg-${color}-400
+          className={
+            color === "brown"
+              ? `mx-auto
+            bg-yellow-800
+            rounded-xl shadow-md
+            md:w-1/2 md:mx-auto md:h-1/2
+            sm:w-80 sm:mx-0`
+              : color === "white"
+              ? `mx-auto
+            bg-gray-300
+            rounded-xl shadow-md
+            md:w-1/2 md:mx-auto md:h-1/2
+            sm:w-80 sm:mx-0`
+              : color === "green"
+              ? `mx-auto
+            bg-green-400
+            rounded-xl shadow-md
+            md:w-1/2 md:mx-auto md:h-1/2
+            sm:w-80 sm:mx-0`
+              : color === "yelow"
+              ? `mx-auto
+            bg-yellow-400
+            rounded-xl shadow-md
+            md:w-1/2 md:mx-auto md:h-1/2
+            sm:w-80 sm:mx-0`
+              : color === "purple"
+              ? `mx-auto
+          bg-purple-400
           rounded-xl shadow-md
           md:w-1/2 md:mx-auto md:h-1/2
-          sm:w-80 sm:mx-0`}
+          sm:w-80 sm:mx-0`
+              : color === "pink"
+              ? `mx-auto
+        bg-pink-400
+        rounded-xl shadow-md
+        md:w-1/2 md:mx-auto md:h-1/2
+        sm:w-80 sm:mx-0`
+              : color === "red"
+              ? `mx-auto
+      bg-red-400
+      rounded-xl shadow-md
+      md:w-1/2 md:mx-auto md:h-1/2
+      sm:w-80 sm:mx-0`
+              : color === "gray"
+              ? `mx-auto
+    bg-gray-400
+    rounded-xl shadow-md
+    md:w-1/2 md:mx-auto md:h-1/2
+    sm:w-80 sm:mx-0`
+              : color === "blue"
+              ? `mx-auto
+bg-blue-400
+rounded-xl shadow-md
+md:w-1/2 md:mx-auto md:h-1/2
+sm:w-80 sm:mx-0`
+              : `mx-auto
+            bg-${color}-400
+            rounded-xl shadow-md
+            md:w-1/2 md:mx-auto md:h-1/2
+            sm:w-80 sm:mx-0`
+          }
         >
           <div>
             <Link to="/">Back</Link>
           </div>
-          <div class="h-1/2 w-full flex justify-between items-baseline px-3 py-5">
+          <div className="h-1/2 w-full flex justify-between items-baseline px-3 py-5">
             <div>
-              <h1 class="text-white font-bold">
+              <h1 className="text-white font-bold">
                 {detailPokemon?.name?.charAt(0).toUpperCase() +
                   detailPokemon?.name?.slice(1)}
               </h1>
@@ -80,30 +142,30 @@ export default function PokemonDetail() {
             </div>
             <h2 className="font-bold text-white">#00{detailPokemon.id}</h2>
           </div>
-          <div class="h-1/3 w-full flex justify-center items-center">
+          <div className="h-1/3 w-full flex justify-center items-center">
             <img
-              class="absolute object-cover hover:scale-125 transition-all transform duration-500"
+              className="absolute object-cover hover:scale-125 transition-all transform duration-500"
               src={detailPokemon?.sprites?.front_default}
               alt={detailPokemon?.name}
             />
           </div>
           <div
-            class="
-              bg-white
-              h-1/2
-              w-full
-              rounded-t-3xl
-              flex flex-col
-              justify-around
-              items-center
-             
-            "
+            className="
+                bg-white
+                h-1/2
+                w-full
+                rounded-t-3xl
+                flex flex-col
+                justify-around
+                items-center
+               
+              "
           >
-            <div class="w-full h-1/2 flex  pt-10 flex-row justify-center items-cente z-50">
+            <div className="w-full h-1/2 flex  pt-10 flex-row justify-center items-cente z-50">
               <div className="mx-2 h-1/2">
                 <button
                   onClick={() => barHandler("about")}
-                  class="text-gray-700 font-bold"
+                  className="text-gray-700 font-bold"
                 >
                   About
                 </button>
@@ -111,7 +173,7 @@ export default function PokemonDetail() {
               <div className="mx-2">
                 <button
                   onClick={() => barHandler("stats")}
-                  class="text-gray-700 font-bold"
+                  className="text-gray-700 font-bold"
                 >
                   Base Stats
                 </button>
@@ -119,7 +181,7 @@ export default function PokemonDetail() {
               <div className="mx-2">
                 <button
                   onClick={() => barHandler("evo")}
-                  class="text-gray-700 font-bold"
+                  className="text-gray-700 font-bold"
                 >
                   Evolution
                 </button>
@@ -127,7 +189,7 @@ export default function PokemonDetail() {
               <div className="mx-2">
                 <button
                   onClick={() => barHandler("moves")}
-                  class="text-gray-700 font-bold"
+                  className="text-gray-700 font-bold"
                 >
                   Moves
                 </button>
@@ -141,5 +203,7 @@ export default function PokemonDetail() {
         </div>
       </div>
     );
+  } else {
+    return <Loading />;
   }
 }

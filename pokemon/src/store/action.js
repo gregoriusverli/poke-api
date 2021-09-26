@@ -1,5 +1,13 @@
-import { DETAIL_POKEMON, LIST_POKEMON } from "./actionType";
+import { DETAIL_POKEMON, LIST_POKEMON, SET_LOADING } from "./actionType";
 const baseUrl = `https://pokeapi.co/api/v2`;
+
+export function setLoading(load) {
+  const setLoad = {
+    type: SET_LOADING,
+    payload: load,
+  };
+  return setLoad;
+}
 
 export function setListPokemon(data) {
   const listPoke = {
@@ -11,6 +19,7 @@ export function setListPokemon(data) {
 
 export function fetchDataPoke() {
   return async function (dispatch, getState) {
+    dispatch(setLoading(true));
     try {
       const response = await fetch(`${baseUrl}/pokemon?&limit=100`);
       if (response.ok) {
@@ -22,6 +31,8 @@ export function fetchDataPoke() {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 }
@@ -36,6 +47,7 @@ export function setDetailPokemon(data) {
 
 export function fetchDetailPokemon(url) {
   return async function (dispatch, getState) {
+    dispatch(setLoading(true));
     try {
       const response = await fetch(url);
       if (response.ok) {
@@ -47,6 +59,8 @@ export function fetchDetailPokemon(url) {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 }

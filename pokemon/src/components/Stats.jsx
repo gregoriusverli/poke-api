@@ -1,7 +1,7 @@
 export default function Stats({ detailPokemon }) {
   return (
     <div
-      class="
+      className="
         bg-gray-300
         h-full
         w-full

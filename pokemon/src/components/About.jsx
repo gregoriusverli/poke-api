@@ -5,7 +5,7 @@ import weightPoke from "../helpers/weight";
 export default function About({ detailPokemon }) {
   return (
     <div
-      class="
+      className="
       bg-gray-300
        h-full
       w-full
